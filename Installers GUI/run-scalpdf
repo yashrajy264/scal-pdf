@@ -1,0 +1,71 @@
+#!/bin/bash
+# ScalPDF Launcher - Binary Executable
+# This file will execute directly when double-clicked
+
+# Get script directory
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Function to show error with GUI
+show_gui_error() {
+    local msg="$1"
+    if command -v zenity >/dev/null 2>&1; then
+        zenity --error --text="$msg" --title="ScalPDF Error" --width=400
+    elif command -v kdialog >/dev/null 2>&1; then
+        kdialog --error "$msg" --title "ScalPDF Error"
+    elif command -v notify-send >/dev/null 2>&1; then
+        notify-send "ScalPDF Error" "$msg" --urgency=critical
+    else
+        echo "ERROR: $msg" >&2
+    fi
+}
+
+# Function to show info with GUI
+show_gui_info() {
+    local msg="$1"
+    if command -v zenity >/dev/null 2>&1; then
+        zenity --info --text="$msg" --title="ScalPDF" --width=300
+    elif command -v kdialog >/dev/null 2>&1; then
+        kdialog --msgbox "$msg" --title "ScalPDF"
+    elif command -v notify-send >/dev/null 2>&1; then
+        notify-send "ScalPDF" "$msg"
+    fi
+}
+
+# Check for GUI environment
+if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+    show_gui_error "No display found. Please run in a desktop environment."
+    exit 1
+fi
+
+# Check for Python 3
+if ! command -v python3 >/dev/null 2>&1; then
+    show_gui_error "Python 3 not found. Please install:\nsudo apt install python3 python3-tk"
+    exit 1
+fi
+
+# Check for tkinter
+if ! python3 -c "import tkinter" 2>/dev/null; then
+    show_gui_error "Python tkinter not found. Please install:\nsudo apt install python3-tk"
+    exit 1
+fi
+
+# Change to script directory
+cd "$DIR"
+
+# Show starting message
+show_gui_info "Starting ScalPDF Launcher..."
+
+# Try to run the launcher
+if [ -f "ScalPDF-Launcher" ]; then
+    python3 ScalPDF-Launcher
+elif [ -f "scalpdf_launcher.py" ]; then
+    python3 scalpdf_launcher.py
+else
+    show_gui_error "ScalPDF launcher files not found!"
+    exit 1
+fi
+
+# Check if it failed
+if [ $? -ne 0 ]; then
+    show_gui_error "Failed to start ScalPDF Launcher. Check that all dependencies are installed."
+fi

@@ -1,0 +1,74 @@
+#!/bin/bash
+# ScalPDF Application Launcher
+# This is a shell script that acts like a binary executable
+
+# Set script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Function to show GUI messages
+show_message() {
+    local type="$1"
+    local title="$2" 
+    local message="$3"
+    
+    # Try different GUI dialog tools
+    if command -v zenity >/dev/null 2>&1; then
+        if [ "$type" = "error" ]; then
+            zenity --error --title="$title" --text="$message" --width=400
+        else
+            zenity --info --title="$title" --text="$message" --width=300
+        fi
+    elif command -v kdialog >/dev/null 2>&1; then
+        if [ "$type" = "error" ]; then
+            kdialog --error "$message" --title "$title"
+        else
+            kdialog --msgbox "$message" --title "$title"
+        fi
+    elif command -v xmessage >/dev/null 2>&1; then
+        xmessage -center -title "$title" "$message"
+    elif command -v notify-send >/dev/null 2>&1; then
+        if [ "$type" = "error" ]; then
+            notify-send "$title" "$message" --urgency=critical --icon=error
+        else
+            notify-send "$title" "$message" --icon=info
+        fi
+    else
+        echo "$title: $message"
+    fi
+}
+
+# Check environment
+if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+    show_message "error" "ScalPDF Error" "No graphical display found.\nPlease run in a desktop environment."
+    exit 1
+fi
+
+# Check Python
+if ! command -v python3 >/dev/null 2>&1; then
+    show_message "error" "ScalPDF Error" "Python 3 is not installed.\n\nTo install:\nsudo apt update\nsudo apt install python3 python3-tk"
+    exit 1
+fi
+
+# Check tkinter
+if ! python3 -c "import tkinter" 2>/dev/null; then
+    show_message "error" "ScalPDF Error" "Python tkinter is missing.\n\nTo install:\nsudo apt install python3-tk"
+    exit 1
+fi
+
+# Show starting message (brief)
+show_message "info" "ScalPDF" "Starting ScalPDF Launcher..." &
+MSG_PID=$!
+
+# Kill the message after 2 seconds
+(sleep 2; kill $MSG_PID 2>/dev/null) &
+
+# Launch Python application
+if [ -f "ScalPDF-Launcher" ]; then
+    exec python3 ScalPDF-Launcher "$@"
+elif [ -f "scalpdf_launcher.py" ]; then
+    exec python3 scalpdf_launcher.py "$@"
+else
+    show_message "error" "ScalPDF Error" "Launcher files not found in:\n$SCRIPT_DIR"
+    exit 1
+fi
