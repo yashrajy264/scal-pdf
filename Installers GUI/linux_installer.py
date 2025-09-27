@@ -272,7 +272,7 @@ class LinuxScalPDFInstaller:
     def get_dependencies_info(self):
         """Get distribution-specific dependencies info."""
         if self.distro == 'debian':
-            return "Will install: python3-tk libxcb-xinerama0 libgl1-mesa-glx libfontconfig1"
+            return "Will install: python3-tk libxcb-xinerama0 libgl1-mesa-dri libfontconfig1"
         elif self.distro == 'fedora':
             return "Will install: tkinter libxcb mesa-libGL fontconfig"
         elif self.distro == 'arch':
@@ -518,9 +518,10 @@ For support, visit: https://github.com/yashrajy264/scal-pdf"""
                     "sudo", "apt", "install", "-y",
                     "python3-pip", "python3-venv", "python3-dev",
                     "libxcb-xinerama0", "libxcb-cursor0", "libxkbcommon-x11-0",
-                    "libgl1-mesa-glx", "libglib2.0-0", "libfontconfig1",
+                    "libgl1-mesa-dri", "libglib2.0-0", "libfontconfig1",
                     "libx11-xcb1", "libxcb-glx0", "libxcb-shape0",
-                    "libxcb-util1", "libxrender1", "libxi6", "libffi-dev"
+                    "libxcb-util1", "libxrender1", "libxi6", "libffi-dev",
+                    "libegl1-mesa", "libgl1-mesa-dev"
                 ]
                 
                 # Run as shell command to handle &&

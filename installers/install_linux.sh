@@ -66,9 +66,9 @@ if command -v apt &> /dev/null; then
     sudo apt update
     sudo apt install -y python3-pip python3-venv python3-dev \
         libxcb-xinerama0 libxcb-cursor0 libxkbcommon-x11-0 \
-        libgl1-mesa-glx libglib2.0-0 libfontconfig1 libx11-xcb1 \
+        libgl1-mesa-dri libglib2.0-0 libfontconfig1 libx11-xcb1 \
         libxcb-glx0 libxcb-shape0 libxcb-util1 libxrender1 libxi6 \
-        libffi-dev
+        libffi-dev libegl1-mesa libgl1-mesa-dev
     print_status "System dependencies installed"
 elif command -v dnf &> /dev/null; then
     # Fedora
