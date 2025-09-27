@@ -2,7 +2,7 @@
 Type=Application
 Name=ScalPDF Launcher
 Comment=Launch or Install ScalPDF - Secure PDF Viewer & Editor
-Exec=python3 %k/scalpdf_launcher.py
+Exec=python3 %k/ScalPDF-Launcher
 Icon=application-pdf
 Categories=Office;Graphics;Viewer;
 Keywords=PDF;viewer;editor;security;encryption;launcher;installer;
@@ -13,12 +13,12 @@ Actions=Install;Launch;Help;
 
 [Desktop Action Install]
 Name=Install ScalPDF
-Exec=python3 %k/scalpdf_launcher.py --install
+Exec=python3 %k/ScalPDF-Launcher --install
 
 [Desktop Action Launch]
 Name=Launch ScalPDF
-Exec=python3 %k/scalpdf_launcher.py --launch
+Exec=python3 %k/ScalPDF-Launcher --launch
 
 [Desktop Action Help]
 Name=Help & Documentation
-Exec=python3 %k/scalpdf_launcher.py --help
+Exec=python3 %k/ScalPDF-Launcher --help
