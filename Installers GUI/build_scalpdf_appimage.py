@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-ScalPDF AppImage Builder
-Creates a portable AppImage for Ubuntu 24.04+ and other Linux distributions.
+ScalPDF AppImage Builder - Direct Application
+Creates a single AppImage that runs ScalPDF directly (not an installer).
 """
 
 import os
@@ -12,21 +12,19 @@ import tempfile
 import urllib.request
 from pathlib import Path
 import stat
-import json
 
-class AppImageBuilder:
+class ScalPDFAppImageBuilder:
     def __init__(self):
         self.project_root = Path(__file__).parent.parent
-        self.build_dir = self.project_root / "build" / "appimage"
+        self.build_dir = self.project_root / "build" / "scalpdf_appimage"
         self.appdir = self.build_dir / "ScalPDF.AppDir"
         
         # AppImage tools URLs
         self.appimagetool_url = "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
-        self.linuxdeploy_url = "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
         
     def setup_build_environment(self):
         """Setup the build environment."""
-        print("🔧 Setting up AppImage build environment...")
+        print("🔧 Setting up ScalPDF AppImage build environment...")
         
         # Clean and create build directory
         if self.build_dir.exists():
@@ -42,8 +40,8 @@ class AppImageBuilder:
         
         print("✅ Build environment ready")
         
-    def download_tools(self):
-        """Download AppImage build tools."""
+    def download_appimagetool(self):
+        """Download AppImage build tool."""
         print("📥 Downloading AppImage tools...")
         
         tools_dir = self.build_dir / "tools"
@@ -56,15 +54,8 @@ class AppImageBuilder:
             urllib.request.urlretrieve(self.appimagetool_url, appimagetool_path)
             appimagetool_path.chmod(0o755)
         
-        # Download linuxdeploy
-        linuxdeploy_path = tools_dir / "linuxdeploy"
-        if not linuxdeploy_path.exists():
-            print("  📦 Downloading linuxdeploy...")
-            urllib.request.urlretrieve(self.linuxdeploy_url, linuxdeploy_path)
-            linuxdeploy_path.chmod(0o755)
-        
         print("✅ Tools downloaded")
-        return appimagetool_path, linuxdeploy_path
+        return appimagetool_path
         
     def create_python_environment(self):
         """Create embedded Python environment."""
@@ -93,7 +84,7 @@ class AppImageBuilder:
         
     def copy_application_files(self):
         """Copy ScalPDF application files."""
-        print("📋 Copying application files...")
+        print("📋 Copying ScalPDF application files...")
         
         app_dir = self.appdir / "usr" / "share" / "scalpdf"
         app_dir.mkdir(parents=True, exist_ok=True)
@@ -117,24 +108,28 @@ class AppImageBuilder:
         return app_dir
         
     def create_launcher_script(self, venv_dir, app_dir):
-        """Create the main launcher script."""
-        print("🚀 Creating launcher script...")
+        """Create the main launcher script that runs ScalPDF directly."""
+        print("🚀 Creating ScalPDF launcher script...")
         
         launcher_script = self.appdir / "usr" / "bin" / "scalpdf"
         launcher_content = f'''#!/bin/bash
-# ScalPDF AppImage Launcher
+# ScalPDF Direct Launcher - Runs the actual application
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${{BASH_SOURCE[0]}}")" && pwd)"
 APP_DIR="$SCRIPT_DIR/../share/scalpdf"
 PYTHON_DIR="$SCRIPT_DIR/../python"
 
-# Set up environment
+# Set up environment variables
 export PYTHONPATH="$APP_DIR:$PYTHONPATH"
 export QT_QPA_PLATFORM_PLUGIN_PATH="$PYTHON_DIR/lib/python*/site-packages/PySide6/Qt/plugins"
+export SCALPDF_APPIMAGE=1
 
-# Launch the application
-exec "$PYTHON_DIR/bin/python" "$APP_DIR/main.py" "$@"
+# Change to app directory
+cd "$APP_DIR"
+
+# Launch ScalPDF directly (not an installer)
+exec "$PYTHON_DIR/bin/python" main.py "$@"
 '''
         
         launcher_script.write_text(launcher_content)
@@ -158,6 +153,7 @@ MimeType=application/pdf;
 StartupNotify=true
 StartupWMClass=ScalPDF
 Keywords=PDF;viewer;editor;security;encryption;
+Terminal=false
 '''
         
         desktop_file.write_text(desktop_content)
@@ -180,16 +176,25 @@ Keywords=PDF;viewer;editor;security;encryption;
             icon = Image.new('RGBA', (size, size), (0, 0, 0, 0))
             draw = ImageDraw.Draw(icon)
             
-            # Background circle
+            # Background circle with gradient effect
             margin = 20
+            # Main circle
             draw.ellipse([margin, margin, size-margin, size-margin], 
-                        fill=(220, 53, 69), outline=(176, 42, 55), width=4)
+                        fill=(220, 53, 69), outline=(176, 42, 55), width=6)
+            
+            # Inner highlight circle
+            highlight_margin = margin + 15
+            draw.ellipse([highlight_margin, highlight_margin, size-highlight_margin, size-highlight_margin], 
+                        fill=None, outline=(255, 255, 255, 80), width=3)
             
             # PDF text
             try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48)
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 52)
             except:
-                font = ImageFont.load_default()
+                try:
+                    font = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 52)
+                except:
+                    font = ImageFont.load_default()
             
             text = "PDF"
             bbox = draw.textbbox((0, 0), text, font=font)
@@ -197,20 +202,34 @@ Keywords=PDF;viewer;editor;security;encryption;
             text_height = bbox[3] - bbox[1]
             
             text_x = (size - text_width) // 2
-            text_y = (size - text_height) // 2 - 10
+            text_y = (size - text_height) // 2 - 15
             
+            # Text shadow
+            draw.text((text_x + 3, text_y + 3), text, fill=(0, 0, 0, 100), font=font)
+            # Main text
             draw.text((text_x, text_y), text, fill='white', font=font)
             
             # Security shield
             shield_points = [
+                (size//2, margin + 25),
+                (size//2 + 30, margin + 42),
+                (size//2 + 30, margin + 75),
+                (size//2, margin + 92),
+                (size//2 - 30, margin + 75),
+                (size//2 - 30, margin + 42)
+            ]
+            draw.polygon(shield_points, fill=(255, 193, 7), outline=(255, 152, 0), width=3)
+            
+            # Shield highlight
+            shield_highlight = [
                 (size//2, margin + 30),
                 (size//2 + 25, margin + 45),
-                (size//2 + 25, margin + 70),
-                (size//2, margin + 85),
-                (size//2 - 25, margin + 70),
+                (size//2 + 25, margin + 65),
+                (size//2, margin + 75),
+                (size//2 - 25, margin + 65),
                 (size//2 - 25, margin + 45)
             ]
-            draw.polygon(shield_points, fill=(255, 193, 7), outline=(255, 152, 0), width=2)
+            draw.polygon(shield_highlight, fill=(255, 255, 255, 60))
             
             # Save icon
             icon_path = self.appdir / "scalpdf.png"
@@ -223,7 +242,7 @@ Keywords=PDF;viewer;editor;security;encryption;
             print("✅ Application icon created")
             
         except ImportError:
-            print("⚠️ PIL not available, using text-based icon")
+            print("⚠️ PIL not available, creating simple icon")
             # Create a simple text-based icon
             icon_path = self.appdir / "scalpdf.png"
             # Create a minimal PNG (this is a placeholder)
@@ -237,7 +256,7 @@ Keywords=PDF;viewer;editor;security;encryption;
         
         apprun_script = self.appdir / "AppRun"
         apprun_content = '''#!/bin/bash
-# ScalPDF AppRun Script
+# ScalPDF AppRun Script - Launches the actual application
 
 # Get the directory where this AppImage is mounted
 HERE="$(dirname "$(readlink -f "${0}")")"
@@ -251,7 +270,11 @@ export PYTHONPATH="${HERE}/usr/share/scalpdf:${PYTHONPATH}"
 export QT_QPA_PLATFORM_PLUGIN_PATH="${HERE}/usr/python/lib/python*/site-packages/PySide6/Qt/plugins"
 export QT_PLUGIN_PATH="${HERE}/usr/python/lib/python*/site-packages/PySide6/Qt/plugins"
 
-# Launch the application
+# ScalPDF specific
+export SCALPDF_APPIMAGE=1
+export SCALPDF_DATA_DIR="${HERE}/usr/share/scalpdf"
+
+# Launch ScalPDF directly
 exec "${HERE}/usr/bin/scalpdf" "$@"
 '''
         
@@ -262,7 +285,7 @@ exec "${HERE}/usr/bin/scalpdf" "$@"
         
     def build_appimage(self, appimagetool_path):
         """Build the final AppImage."""
-        print("🔨 Building AppImage...")
+        print("🔨 Building ScalPDF AppImage...")
         
         output_path = self.build_dir / "ScalPDF-x86_64.AppImage"
         
@@ -277,72 +300,143 @@ exec "${HERE}/usr/bin/scalpdf" "$@"
         ], env=env, capture_output=True, text=True)
         
         if result.returncode == 0:
-            print(f"✅ AppImage created: {output_path}")
+            print(f"✅ ScalPDF AppImage created: {output_path}")
             return output_path
         else:
             print(f"❌ AppImage build failed: {result.stderr}")
             return None
             
-    def create_info_file(self, appimage_path):
-        """Create info file for the AppImage."""
-        info_content = f'''# ScalPDF AppImage
+    def create_usage_info(self, appimage_path):
+        """Create usage information file."""
+        info_content = f'''# 🚀 ScalPDF - Ready to Use!
 
-## 📦 Package Information
-- **Name**: ScalPDF
-- **Version**: 1.0.0
-- **Architecture**: x86_64
-- **Target**: Ubuntu 24.04+ and compatible Linux distributions
+## 📦 What You Have
 
-## 🚀 Usage
+**File**: `{appimage_path.name}`
+**Type**: Portable AppImage Application
+**Size**: {appimage_path.stat().st_size / (1024*1024):.1f} MB
+
+## 🎯 How to Use
+
+### **Simple Usage:**
 ```bash
-# Make executable
+# Make executable (one-time)
 chmod +x {appimage_path.name}
 
-# Run directly
+# Double-click to run, or:
 ./{appimage_path.name}
+```
 
-# Or install system-wide
+### **System Integration (Optional):**
+```bash
+# Move to applications folder
 sudo mv {appimage_path.name} /usr/local/bin/scalpdf
+
+# Now you can run from anywhere
 scalpdf
 ```
 
-## ✨ Features
-- ✅ Portable - runs on any Linux distribution
-- ✅ No installation required
-- ✅ Includes all dependencies
-- ✅ Desktop integration support
-- ✅ File association support
+## ✨ What This AppImage Does
+
+- ✅ **Launches ScalPDF directly** (not an installer)
+- ✅ **Complete PDF viewer and editor**
+- ✅ **All features included**: view, annotate, merge, split, encrypt
+- ✅ **No installation required** - just run it
+- ✅ **Portable** - works on any Linux distribution
+- ✅ **Offline** - no internet connection needed
+
+## 🎨 Features Included
+
+### **PDF Viewing:**
+- Multi-page viewing with thumbnails
+- Zoom, rotate, fit-to-width/height
+- Tabbed document interface
+- Search within documents
+
+### **PDF Editing:**
+- Merge multiple PDFs
+- Split PDFs by page ranges
+- Reorder and delete pages
+- Extract specific pages
+
+### **Annotations:**
+- Highlight text
+- Add sticky notes
+- Underline and strikethrough
+- Save annotations in XFDF format
+
+### **Security:**
+- AES-256-GCM encryption
+- Password-based encryption
+- Argon2id key derivation
+- Secure document handling
+
+### **Compression:**
+- Multiple quality presets
+- Image recompression
+- File size optimization
+- Lossless and lossy options
 
 ## 🔧 System Requirements
-- Ubuntu 24.04+ or compatible Linux distribution
-- X11 or Wayland display server
-- 64-bit architecture
 
-## 🛡️ Security
-- Offline-only operation
-- AES-256-GCM encryption
-- No telemetry or data collection
+- **OS**: Any Linux distribution with GUI
+- **Architecture**: x86_64 (64-bit)
+- **Display**: X11 or Wayland
+- **Memory**: 512MB RAM minimum
+- **Storage**: 200MB free space
 
-## 📋 File Associations
-The AppImage supports automatic file associations for PDF files.
-To enable, run: `{appimage_path.name} --install-desktop`
+## 🛡️ Security & Privacy
+
+- ✅ **Completely offline** - no internet required
+- ✅ **No telemetry** - no data collection
+- ✅ **Local processing** - files never leave your computer
+- ✅ **Open source** - transparent and auditable
+
+## 🆘 Troubleshooting
+
+### **"Permission denied"**
+```bash
+chmod +x {appimage_path.name}
+```
+
+### **"No such file or directory"**
+- Make sure you're in the correct directory
+- Check the file exists: `ls -la {appimage_path.name}`
+
+### **GUI doesn't start**
+- Make sure you're in a desktop environment
+- Check display: `echo $DISPLAY`
+
+### **Missing libraries**
+The AppImage includes all dependencies, but if you get errors:
+```bash
+sudo apt install libgl1-mesa-dri libxcb-xinerama0
+```
+
+## 🎉 Enjoy ScalPDF!
+
+This is the complete ScalPDF application packaged as a portable AppImage.
+No installation, no setup - just run and use!
+
+**Double-click to start using ScalPDF immediately!** 🚀
 '''
         
-        info_file = appimage_path.parent / f"{appimage_path.stem}.md"
+        info_file = appimage_path.parent / f"README-{appimage_path.stem}.md"
         info_file.write_text(info_content)
         
         return info_file
         
     def build(self):
         """Main build process."""
-        print("🏗️ Starting ScalPDF AppImage build...")
+        print("🏗️ Building ScalPDF AppImage (Direct Application)...")
+        print("=" * 60)
         
         try:
             # Setup environment
             self.setup_build_environment()
             
             # Download tools
-            appimagetool_path, linuxdeploy_path = self.download_tools()
+            appimagetool_path = self.download_appimagetool()
             
             # Create Python environment
             venv_dir = self.create_python_environment()
@@ -360,22 +454,26 @@ To enable, run: `{appimage_path.name} --install-desktop`
             appimage_path = self.build_appimage(appimagetool_path)
             
             if appimage_path and appimage_path.exists():
-                # Create info file
-                info_file = self.create_info_file(appimage_path)
+                # Make it executable
+                appimage_path.chmod(0o755)
                 
-                print(f"""
-🎉 AppImage build completed successfully!
-
-📦 Output files:
-   • AppImage: {appimage_path}
-   • Info: {info_file}
-
-🚀 To test:
-   chmod +x {appimage_path}
-   ./{appimage_path}
-
-📋 Size: {appimage_path.stat().st_size / (1024*1024):.1f} MB
-""")
+                # Create usage info
+                info_file = self.create_usage_info(appimage_path)
+                
+                print("\n" + "=" * 60)
+                print("🎉 ScalPDF AppImage Build Completed Successfully!")
+                print("=" * 60)
+                print(f"📦 AppImage: {appimage_path}")
+                print(f"📄 Usage Guide: {info_file}")
+                print(f"📏 Size: {appimage_path.stat().st_size / (1024*1024):.1f} MB")
+                print()
+                print("🚀 To use:")
+                print(f"   chmod +x {appimage_path.name}")
+                print(f"   ./{appimage_path.name}")
+                print()
+                print("✨ This AppImage runs ScalPDF directly - no installer needed!")
+                print("=" * 60)
+                
                 return appimage_path
             else:
                 print("❌ AppImage build failed")
@@ -383,31 +481,35 @@ To enable, run: `{appimage_path.name} --install-desktop`
                 
         except Exception as e:
             print(f"❌ Build failed: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
 def main():
     """Main entry point."""
     if len(sys.argv) > 1 and sys.argv[1] == "--help":
         print("""
-ScalPDF AppImage Builder
+ScalPDF AppImage Builder (Direct Application)
 
 Usage:
-    python build_appimage.py [options]
+    python build_scalpdf_appimage.py
 
-Options:
-    --help    Show this help message
+This script creates a single AppImage that runs ScalPDF directly.
+No installer GUI - just the actual PDF application.
 
-This script creates a portable AppImage for ScalPDF that can run
-on Ubuntu 24.04+ and other compatible Linux distributions.
+The resulting AppImage can be double-clicked to launch ScalPDF
+immediately with all features available.
 """)
         return
     
-    builder = AppImageBuilder()
+    builder = ScalPDFAppImageBuilder()
     appimage_path = builder.build()
     
     if appimage_path:
+        print(f"\n🎊 SUCCESS! ScalPDF AppImage ready at: {appimage_path}")
         sys.exit(0)
     else:
+        print("\n💥 FAILED! AppImage build unsuccessful")
         sys.exit(1)
 
 if __name__ == "__main__":
