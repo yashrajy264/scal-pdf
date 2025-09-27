@@ -1,242 +1,345 @@
-# ScalPDF GUI Installers
+# ScalPDF Package System
 
-Professional graphical installers designed for normal consumers who want an easy, user-friendly installation experience.
+Complete package management system for ScalPDF with multiple installation formats and a modern GUI installer.
 
-## 🎯 **For Normal Users**
+## 🚀 Quick Start
 
-These GUI installers provide a **Windows/Mac-style installation experience** with:
-- ✅ **Point-and-click interface** - No command line needed
-- ✅ **Visual progress tracking** - See exactly what's happening
-- ✅ **Customizable options** - Choose what gets installed
-- ✅ **Error handling** - Clear error messages and solutions
-- ✅ **Professional appearance** - Modern, clean interface
+### For End Users (Ubuntu 24.04)
 
-## 🚀 **Quick Start**
-
-### **Cross-Platform Installer (Recommended)**
+**Option 1: Smart Launcher (Recommended)**
 ```bash
-python3 gui_installer.py
-```
-*Automatically detects your platform and runs the appropriate installer*
-
-### **Windows-Specific Installer**
-```bash
-python windows_installer.py
-```
-*Advanced Windows installer with native Windows features*
-
-### **Linux-Specific Installer**
-```bash
-python3 linux_installer.py
-```
-*Linux installer with distribution-specific package management*
-
-## 📱 **Installer Features**
-
-### **Universal GUI Installer (`gui_installer.py`)**
-- **Cross-platform compatibility** (Windows, Linux, macOS)
-- **Simple, clean interface** suitable for all users
-- **Automatic platform detection**
-- **Basic installation options**
-- **Progress tracking with detailed logs**
-
-### **Windows Advanced Installer (`windows_installer.py`)**
-- **Native Windows look and feel** (Vista/Windows 10+ theme)
-- **Windows-specific features**:
-  - Start Menu integration
-  - Windows registry entries
-  - File associations (open PDFs with ScalPDF)
-  - Add/Remove Programs integration
-  - User vs System installation options
-- **Professional installer wizard** interface
-- **Administrator privilege handling**
-- **Windows shortcuts and icons**
-
-### **Linux Advanced Installer (`linux_installer.py`)**
-- **Distribution detection** (Ubuntu, Fedora, Arch, etc.)
-- **Package manager integration**:
-  - Automatic system dependency installation
-  - Distribution-specific package commands
-- **Desktop environment integration**:
-  - Application menu entries
-  - Desktop shortcuts
-  - MIME type associations
-- **User vs System installation**
-- **PATH integration for command-line tools**
-
-## 🖥️ **Installation Options**
-
-### **Installation Types**
-- **User Installation** (Recommended)
-  - Installs to user directory
-  - No administrator rights required
-  - Available only to current user
-  
-- **System Installation**
-  - Installs to system directory
-  - Requires administrator/root privileges
-  - Available to all users
-
-### **Customization Options**
-- ✅ **Desktop Shortcut** - Quick access from desktop
-- ✅ **Start Menu/App Menu** - Integration with system menus
-- ✅ **Command Line Tools** - Add `scalpdf` commands to PATH
-- ✅ **File Associations** - Open PDFs with ScalPDF by default
-- ✅ **System Dependencies** - Auto-install required libraries
-
-## 📋 **What Gets Installed**
-
-### **Core Application**
-- **ScalPDF GUI** - Full-featured PDF management interface
-- **CLI Tools** - Command-line utilities for batch operations
-- **Python Environment** - Isolated virtual environment with all dependencies
-
-### **Desktop Integration**
-- **Application Shortcuts** - Desktop and menu shortcuts
-- **File Associations** - PDF files open with ScalPDF
-- **System Registration** - Proper uninstaller and system integration
-
-### **Dependencies**
-- **Python Packages** - PySide6, PyMuPDF, pikepdf, cryptography, etc.
-- **System Libraries** - Qt, graphics libraries, fonts (Linux)
-- **Runtime Components** - All required components for offline operation
-
-## 🎨 **User Interface**
-
-### **Modern Design**
-- **Clean, professional appearance**
-- **Progress indicators** with real-time updates
-- **Detailed installation logs** for troubleshooting
-- **Help system** with context-sensitive information
-
-### **Platform-Native Look**
-- **Windows**: Vista/Windows 10+ theme with native controls
-- **Linux**: GTK/Qt theme integration
-- **Cross-platform**: Consistent experience across platforms
-
-## 🔧 **Installation Process**
-
-### **Step-by-Step Process**
-1. **System Check** - Verify Python and system requirements
-2. **Dependency Installation** - Install system packages (if selected)
-3. **File Copying** - Copy application files to destination
-4. **Environment Setup** - Create Python virtual environment
-5. **Package Installation** - Install Python dependencies
-6. **Integration** - Create shortcuts, menu entries, file associations
-7. **Testing** - Verify installation works correctly
-8. **Completion** - Show success message and usage instructions
-
-### **Error Handling**
-- **Clear error messages** with suggested solutions
-- **Detailed logs** for troubleshooting
-- **Graceful fallbacks** when optional features fail
-- **Rollback capability** for failed installations
-
-## 🛡️ **Security & Privacy**
-
-### **Safe Installation**
-- **No internet required** after initial download
-- **Local processing only** - No data sent anywhere
-- **Isolated environment** - Uses Python virtual environment
-- **User-level permissions** - No unnecessary privilege escalation
-
-### **Privacy Maintained**
-- **No telemetry** or usage tracking
-- **No registration** or account creation
-- **Offline operation** - Works completely offline
-- **Local storage** - All data stays on your device
-
-## 🚀 **Usage Examples**
-
-### **For Home Users**
-```bash
-# Download ScalPDF
-git clone https://github.com/yashrajy264/scal-pdf.git
 cd scal-pdf
-
-# Run GUI installer
-python3 "Installers GUI/gui_installer.py"
-
-# Follow the wizard:
-# 1. Choose installation location
-# 2. Select options (shortcuts, menu entries)
-# 3. Click "Install"
-# 4. Wait for completion
-# 5. Start using ScalPDF!
+python3 "Installers GUI/smart_launcher.py"
 ```
 
-### **For IT Administrators**
+**Option 2: GUI Package Installer**
 ```bash
-# Windows deployment
-python "Installers GUI/windows_installer.py"
-# Choose "Install for all users"
-# Customize options for organization needs
-
-# Linux deployment
-sudo python3 "Installers GUI/linux_installer.py"
-# Choose "System-wide installation"
-# Enable system dependency installation
+cd scal-pdf
+python3 "Installers GUI/package_installer.py"
 ```
 
-## 🔍 **Troubleshooting**
+**Option 3: Build and Install Automatically**
+```bash
+cd scal-pdf
+python3 "Installers GUI/smart_launcher.py" --build
+```
 
-### **Common Issues**
+## 📦 Available Package Formats
 
-**"Python not found"**
-- Install Python 3.11+ from python.org
-- Make sure Python is in PATH
+### 1. AppImage (Universal Linux)
+- **File**: `ScalPDF-x86_64.AppImage`
+- **Target**: All Linux distributions
+- **Advantages**: Portable, no installation required
+- **Usage**: `chmod +x ScalPDF-x86_64.AppImage && ./ScalPDF-x86_64.AppImage`
 
-**"tkinter not available"**
-- Linux: `sudo apt install python3-tk`
-- Windows: Reinstall Python with tkinter
+### 2. .deb Package (Ubuntu/Debian)
+- **File**: `scalpdf_1.0.0_amd64.deb`
+- **Target**: Ubuntu 24.04+, Debian-based distributions
+- **Advantages**: Native integration, dependency management
+- **Usage**: `sudo dpkg -i scalpdf_1.0.0_amd64.deb`
 
-**"Permission denied"**
-- Choose user installation instead of system
-- Or run with appropriate privileges
+### 3. Snap Package (Universal Linux)
+- **File**: `scalpdf_1.0.0_amd64.snap`
+- **Target**: Any Linux with Snap support
+- **Advantages**: Sandboxed, automatic updates
+- **Usage**: `sudo snap install scalpdf_1.0.0_amd64.snap --dangerous`
 
-**"Dependencies failed"**
-- Check internet connection
-- Try manual dependency installation
+## 🛠️ Building Packages
 
-### **Getting Help**
-- **Installation logs** - Check detailed logs in installer
-- **System requirements** - Verify Python 3.11+ and system deps
-- **GitHub Issues** - Report problems with logs
-- **Documentation** - Check main README.md
+### Build All Packages
+```bash
+# Using GUI installer
+python3 "Installers GUI/package_installer.py"
+# Click "Build Packages" button
 
-## 🎯 **Perfect For**
+# Using individual builders
+python3 "Installers GUI/build_appimage.py"
+python3 "Installers GUI/build_deb.py"
+python3 "Installers GUI/build_snap.py"
+```
 
-### **Home Users**
-- Want easy, click-to-install experience
-- Don't want to use command line
-- Need desktop integration (shortcuts, menus)
-- Want professional-looking installer
+### Build Requirements
 
-### **Small Businesses**
-- Need to deploy to multiple computers
-- Want consistent installation experience
-- Require system-wide installation options
-- Need uninstaller for easy removal
+**For AppImage:**
+- Python 3.11+
+- Internet connection (to download AppImage tools)
+- All Python dependencies
 
-### **Educational Institutions**
-- Simple deployment for students/staff
-- System-wide installation for shared computers
-- Easy uninstallation for lab management
-- Professional appearance for institutional use
+**For .deb Package:**
+- `dpkg-dev` package
+- `gzip` command
+- Ubuntu/Debian system (recommended)
 
-## 📊 **Comparison**
+**For Snap Package:**
+- `snapcraft` installed (`sudo snap install snapcraft --classic`)
+- Optional: Docker or LXD for containerized builds
 
-| Feature | GUI Installer | Command Line | Manual Install |
-|---------|---------------|--------------|----------------|
-| **Ease of Use** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐ |
-| **Visual Feedback** | ✅ | ❌ | ❌ |
-| **Error Handling** | ✅ | ⭐ | ❌ |
-| **Desktop Integration** | ✅ | ⭐ | ❌ |
-| **Customization** | ✅ | ✅ | ✅ |
-| **Automation** | ⭐ | ✅ | ❌ |
+## 🎯 Tools Overview
 
-The GUI installers provide the **best experience for normal consumers** who want a simple, reliable way to install ScalPDF with full desktop integration and professional appearance.
+### 1. Smart Launcher (`smart_launcher.py`)
+Automatically detects and launches ScalPDF using the best available method.
+
+**Features:**
+- Auto-detects installed versions
+- Prioritizes system installations
+- Falls back to portable formats
+- Launches package builder if needed
+
+**Usage:**
+```bash
+python3 smart_launcher.py           # Auto-launch ScalPDF
+python3 smart_launcher.py --build   # Build packages
+python3 smart_launcher.py --info    # Show system info
+python3 smart_launcher.py --list    # List launch methods
+```
+
+### 2. Package Installer GUI (`package_installer.py`)
+Modern GUI for building and installing ScalPDF packages.
+
+**Features:**
+- System detection and compatibility checking
+- Package building with progress tracking
+- Installation with multiple formats
+- Desktop integration setup
+- Installation testing
+
+### 3. Package Builders
+
+#### AppImage Builder (`build_appimage.py`)
+Creates portable AppImage packages.
+
+**Output:**
+- `build/ScalPDF-x86_64.AppImage` - Portable executable
+- `build/ScalPDF-x86_64.md` - Usage instructions
+
+#### .deb Builder (`build_deb.py`)
+Creates native Ubuntu/Debian packages.
+
+**Output:**
+- `build/scalpdf_1.0.0_amd64.deb` - Debian package
+- `build/scalpdf_1.0.0_amd64.md` - Installation guide
+
+#### Snap Builder (`build_snap.py`)
+Creates Snap packages for universal Linux distribution.
+
+**Output:**
+- `build/scalpdf_1.0.0_amd64.snap` - Snap package
+- `build/scalpdf_1.0.0_amd64.md` - Installation guide
+
+### 4. Test Suite (`test_packages.py`)
+Comprehensive testing for all packages and tools.
+
+**Tests:**
+- Build environment validation
+- Package builder functionality
+- GUI installer testing
+- Smart launcher testing
+- Existing package validation
+
+**Usage:**
+```bash
+python3 test_packages.py
+```
+
+## 🔧 System Requirements
+
+### Minimum Requirements
+- **OS**: Ubuntu 24.04+ or compatible Linux distribution
+- **Python**: 3.11+
+- **Architecture**: x86_64 (amd64)
+- **Display**: X11 or Wayland
+- **Memory**: 512MB RAM
+- **Storage**: 100MB free space
+
+### Recommended Requirements
+- **OS**: Ubuntu 24.04 LTS
+- **Python**: 3.11+
+- **Memory**: 2GB RAM
+- **Storage**: 1GB free space
+- **Network**: For downloading build tools (build-time only)
+
+### Dependencies
+
+**Runtime Dependencies:**
+```
+python3 (>= 3.11)
+python3-tk
+libgl1-mesa-dri
+libxcb-xinerama0
+libfontconfig1
+libglib2.0-0
+```
+
+**Build Dependencies:**
+```
+python3-dev
+python3-pip
+python3-venv
+build-essential
+libffi-dev
+```
+
+**Optional Build Tools:**
+```
+dpkg-dev          # For .deb packages
+snapcraft         # For Snap packages
+docker            # For containerized builds
+```
+
+## 📋 Installation Methods Comparison
+
+| Method | Pros | Cons | Best For |
+|--------|------|------|----------|
+| **AppImage** | ✅ Portable<br>✅ No root required<br>✅ Works everywhere | ❌ Manual updates<br>❌ No system integration | Testing, portable use |
+| **.deb Package** | ✅ Native integration<br>✅ Dependency management<br>✅ System updates | ❌ Ubuntu/Debian only<br>❌ Requires root | Ubuntu/Debian users |
+| **Snap Package** | ✅ Universal Linux<br>✅ Sandboxed<br>✅ Auto-updates | ❌ Larger size<br>❌ Snap dependency | Security-focused users |
+
+## 🛡️ Security Features
+
+### Package Security
+- **Code Signing**: All packages include checksums
+- **Dependency Isolation**: Each package includes its dependencies
+- **Minimal Permissions**: Packages request only necessary permissions
+- **Offline Operation**: No network access required after installation
+
+### Application Security
+- **AES-256-GCM Encryption**: Military-grade document encryption
+- **Argon2id Key Derivation**: Secure password-based encryption
+- **No Telemetry**: Complete offline operation
+- **Memory Protection**: Secure key handling and memory wiping
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**"Package build failed"**
+```bash
+# Check system requirements
+python3 "Installers GUI/test_packages.py"
+
+# Install missing dependencies
+sudo apt update
+sudo apt install python3-dev python3-pip python3-venv build-essential
+```
+
+**"AppImage won't run"**
+```bash
+# Make executable
+chmod +x ScalPDF-x86_64.AppImage
+
+# Check dependencies
+ldd ScalPDF-x86_64.AppImage
+```
+
+**".deb installation failed"**
+```bash
+# Fix dependencies
+sudo apt-get install -f
+
+# Check package
+dpkg-deb --info scalpdf_1.0.0_amd64.deb
+```
+
+**"Snap installation failed"**
+```bash
+# Check snap system
+sudo systemctl status snapd
+
+# Install with force
+sudo snap install scalpdf_1.0.0_amd64.snap --dangerous --devmode
+```
+
+### Getting Help
+
+1. **Run Tests**: `python3 "Installers GUI/test_packages.py"`
+2. **Check System**: `python3 "Installers GUI/smart_launcher.py" --info`
+3. **View Logs**: Check `build/test_report.json` for detailed information
+4. **GitHub Issues**: Report issues at https://github.com/yashrajy264/scal-pdf/issues
+
+## 📁 File Structure
+
+```
+Installers GUI/
+├── build_appimage.py      # AppImage builder
+├── build_deb.py          # .deb package builder
+├── build_snap.py         # Snap package builder
+├── package_installer.py  # GUI installer
+├── smart_launcher.py     # Smart launcher
+├── test_packages.py      # Test suite
+└── README.md            # This file
+
+build/                    # Build outputs (created during build)
+├── appimage/            # AppImage build files
+├── deb/                 # .deb build files
+├── snap/                # Snap build files
+├── ScalPDF-x86_64.AppImage
+├── scalpdf_1.0.0_amd64.deb
+├── scalpdf_1.0.0_amd64.snap
+└── test_report.json     # Test results
+```
+
+## 🎯 Usage Examples
+
+### For Developers
+```bash
+# Test everything
+python3 "Installers GUI/test_packages.py"
+
+# Build all packages
+python3 "Installers GUI/package_installer.py"
+
+# Test specific package
+chmod +x build/ScalPDF-x86_64.AppImage
+./build/ScalPDF-x86_64.AppImage
+```
+
+### For End Users
+```bash
+# Easy installation
+python3 "Installers GUI/smart_launcher.py"
+
+# Manual package selection
+python3 "Installers GUI/package_installer.py"
+
+# Direct AppImage use
+chmod +x ScalPDF-x86_64.AppImage
+./ScalPDF-x86_64.AppImage
+```
+
+### For System Administrators
+```bash
+# System-wide .deb installation
+sudo dpkg -i scalpdf_1.0.0_amd64.deb
+sudo apt-get install -f
+
+# Snap installation for all users
+sudo snap install scalpdf_1.0.0_amd64.snap --dangerous
+
+# Verify installation
+scalpdf --version
+```
+
+## 🔄 Updates and Maintenance
+
+### Updating ScalPDF
+
+**AppImage**: Download new version and replace old file
+**Debian Package**: `sudo apt update && sudo apt upgrade scalpdf`
+**Snap Package**: `sudo snap refresh scalpdf` (if from store)
+
+### Uninstalling ScalPDF
+
+**AppImage**: Simply delete the file
+**Debian Package**: `sudo apt remove scalpdf`
+**Snap Package**: `sudo snap remove scalpdf`
+
+## 📞 Support
+
+- **Documentation**: See main README.md
+- **Issues**: https://github.com/yashrajy264/scal-pdf/issues
+- **Security**: Report security issues privately via GitHub
+- **License**: MIT License (see LICENSE file)
 
 ---
 
-**Ready to install ScalPDF?** Just run `python3 gui_installer.py` and follow the wizard! 🚀
+**ScalPDF**: Secure, offline PDF management for everyone. 🛡️📄
