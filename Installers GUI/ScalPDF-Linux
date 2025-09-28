@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""
+ScalPDF - Linux Compatible Version
+Automatically installs dependencies and runs ScalPDF
+"""
+
+import os
+import sys
+import subprocess
+import tempfile
+import shutil
+from pathlib import Path
+
+def check_python():
+    """Check Python version."""
+    if sys.version_info < (3, 7):
+        print("❌ Python 3.7+ required")
+        return False
+    print(f"✅ Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
+    return True
+
+def install_dependencies():
+    """Install required dependencies."""
+    print("📦 Installing ScalPDF dependencies...")
+    
+    dependencies = [
+        "PyMuPDF>=1.23.0",
+        "Pillow>=10.0.0", 
+        "pikepdf>=8.0.0",
+        "cryptography>=41.0.0"
+    ]
+    
+    try:
+        # Try to install in user space
+        for dep in dependencies:
+            print(f"  Installing {dep}...")
+            result = subprocess.run([
+                sys.executable, "-m", "pip", "install", "--user", dep
+            ], capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                print(f"  ⚠️ Failed to install {dep}: {result.stderr}")
+                return False
+        
+        print("✅ All dependencies installed successfully!")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error installing dependencies: {e}")
+        return False
+
+def check_dependencies():
+    """Check if dependencies are available."""
+    deps = {
+        'PyMuPDF': 'fitz',
+        'Pillow': 'PIL',
+        'pikepdf': 'pikepdf',
+        'cryptography': 'cryptography'
+    }
+    
+    missing = []
+    for name, module in deps.items():
+        try:
+            __import__(module)
+            print(f"✅ {name}")
+        except ImportError:
+            print(f"❌ {name}")
+            missing.append(name)
+    
+    return len(missing) == 0, missing
+
+def run_scalpdf():
+    """Run the ScalPDF application."""
+    print("🚀 Starting ScalPDF...")
+    
+    # Get the directory of this script
+    script_dir = Path(__file__).parent
+    
+    # Try to run the portable version
+    portable_app = script_dir / "ScalPDF-Portable.py"
+    
+    if portable_app.exists():
+        try:
+            # Run the portable app
+            subprocess.run([sys.executable, str(portable_app)])
+        except KeyboardInterrupt:
+            print("\n👋 ScalPDF closed by user")
+        except Exception as e:
+            print(f"❌ Error running ScalPDF: {e}")
+    else:
+        print("❌ ScalPDF-Portable.py not found")
+
+def main():
+    """Main entry point."""
+    print("🔒 ScalPDF - Secure PDF Viewer & Editor")
+    print("=" * 50)
+    
+    # Check Python version
+    if not check_python():
+        input("Press Enter to exit...")
+        return
+    
+    # Check dependencies
+    deps_ok, missing = check_dependencies()
+    
+    if not deps_ok:
+        print(f"\n📦 Missing dependencies: {', '.join(missing)}")
+        print("🔧 Attempting to install automatically...")
+        
+        if install_dependencies():
+            print("✅ Dependencies installed! Restarting...")
+            # Restart the script to pick up new dependencies
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+        else:
+            print("\n❌ Automatic installation failed.")
+            print("Please install manually:")
+            print("pip install --user PyMuPDF Pillow pikepdf cryptography")
+            input("Press Enter to exit...")
+            return
+    
+    # Run ScalPDF
+    run_scalpdf()
+
+if __name__ == "__main__":
+    main()

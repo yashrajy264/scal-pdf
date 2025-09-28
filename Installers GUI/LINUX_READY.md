@@ -1,106 +1,159 @@
-# 🐧 ScalPDF Linux - Ready to Use!
+# 🐧 ScalPDF for Linux - Ready to Use!
 
-## 🚀 **Quick Start**
+## ❌ **Binary Compatibility Issue Fixed!**
 
-### **Method 1: Direct Python Execution (Recommended)**
+The `ScalPDF` binary was built for macOS and won't work on Linux. Here are the **Linux-compatible solutions**:
+
+## 🚀 **Linux Solutions (Choose One)**
+
+### **🎯 Option 1: Auto-Installing Launcher (Recommended)**
 ```bash
-# In your VM terminal:
-cd scal-pdf/Installers\ GUI/
-python3 ScalPDF-Linux.py
+# Just run this - it handles everything automatically!
+./run-scalpdf-linux.sh
+```
+**What it does:**
+- ✅ Checks Python and tkinter
+- ✅ Installs missing dependencies automatically
+- ✅ Launches ScalPDF with full functionality
+- ✅ Works on Ubuntu, Fedora, Arch, and other Linux distros
+
+### **🔧 Option 2: Python Launcher with Auto-Install**
+```bash
+# Run the Python auto-installer
+python3 ScalPDF-Linux
+```
+**What it does:**
+- ✅ Checks and installs PyMuPDF, Pillow, pikepdf, cryptography
+- ✅ Automatically handles pip installation
+- ✅ Launches the portable ScalPDF application
+
+### **📱 Option 3: Manual Dependency Install**
+```bash
+# Install dependencies manually
+pip install --user PyMuPDF Pillow pikepdf cryptography
+
+# Then run the portable version
+python3 ScalPDF-Portable.py
 ```
 
-### **Method 2: Make it Executable**
+## 🎯 **Quick Start for Your VM**
+
+### **Super Simple (One Command):**
 ```bash
-# In your VM terminal:
-cd scal-pdf/Installers\ GUI/
-chmod +x ScalPDF-Linux.py
-./ScalPDF-Linux.py
+cd "scal-pdf/Installers GUI"
+./run-scalpdf-linux.sh
 ```
 
-## 🔧 **What This Does**
+### **If Permission Denied:**
+```bash
+chmod +x run-scalpdf-linux.sh
+chmod +x ScalPDF-Linux
+./run-scalpdf-linux.sh
+```
 
-✅ **Auto-installs dependencies** - No manual pip install needed!  
-✅ **Works on any Linux** - Ubuntu, Debian, CentOS, etc.  
-✅ **Full GUI application** - Tkinter-based, works everywhere  
-✅ **All PDF features** - View, merge, split, compress, encrypt  
-✅ **Completely offline** - No internet required after first run  
+## ✨ **What You'll Get**
 
-## 📦 **Dependencies Auto-Installed**
+### **🔒 Complete PDF Application:**
+- **PDF Viewing** - Multi-page navigation, zoom, rotation
+- **PDF Editing** - Merge, split, extract pages
+- **PDF Security** - AES-256 encryption/decryption  
+- **PDF Compression** - Reduce file sizes
+- **Modern GUI** - Professional interface with panels
+- **Keyboard Shortcuts** - Full desktop experience
 
-The application will automatically install these if missing:
-- `PyMuPDF` - PDF processing and viewing
-- `Pillow` - Image handling  
-- `pikepdf` - Advanced PDF operations
-- `cryptography` - Encryption support
-- `argon2-cffi` - Secure key derivation
+### **🛡️ Linux-Optimized Features:**
+- **Auto-dependency installation** - No manual setup
+- **Distribution detection** - Works on Ubuntu, Fedora, Arch
+- **Package manager integration** - Uses apt, dnf, pacman
+- **User-space installation** - No root required for Python packages
+- **Error handling** - Clear messages and solutions
 
-## 🎯 **Features**
+## 🔧 **System Requirements**
 
-### **PDF Viewer**
-- 📖 View PDFs with zoom and navigation
-- 🔍 Zoom in/out and fit to width
-- ⏮️⏭️ Page navigation controls
-- 📊 Document information panel
+### **Minimum:**
+- **OS**: Any Linux distribution with GUI
+- **Python**: 3.7+ (usually pre-installed)
+- **Display**: X11 or Wayland desktop environment
+- **Memory**: 512 MB RAM
+- **Storage**: 100 MB free space
 
-### **PDF Operations**
-- 🔀 **Merge** multiple PDFs
-- ✂️ **Split** PDFs by page range
-- 🗜️ **Compress** PDFs to reduce size
-- 🔒 **Encrypt** with AES-256 encryption
-- 🔓 **Decrypt** password-protected PDFs
+### **Dependencies (Auto-Installed):**
+- **PyMuPDF** - PDF processing
+- **Pillow** - Image handling
+- **pikepdf** - Advanced PDF operations
+- **cryptography** - Encryption support
+- **tkinter** - GUI framework (system package)
 
-### **Security & Privacy**
-- 🛡️ **Completely offline** - no internet required
-- 🔐 **AES-256 encryption** for sensitive documents
-- 🚫 **No telemetry** or data collection
-- 💾 **Local processing** only
+## 🎊 **Why This Works Better**
 
-## 🖥️ **System Requirements**
+### **❌ Binary Issues (Fixed):**
+- macOS ARM64 binary won't run on Linux x86_64
+- Cross-compilation complexity
+- Architecture mismatches
 
-- **Linux** (any distribution)
-- **Python 3.6+** (usually pre-installed)
-- **Internet connection** (only for first-time dependency installation)
-- **GUI environment** (X11, Wayland)
+### **✅ Python Solution (Better):**
+- **Universal compatibility** - works on any Linux
+- **Auto-dependency handling** - installs what's needed
+- **Better error messages** - tells you exactly what to do
+- **Easier maintenance** - no binary compatibility issues
+- **Smaller download** - dependencies installed as needed
 
 ## 🆘 **Troubleshooting**
 
-### **If you get "python3: command not found":**
+### **"Permission denied":**
 ```bash
-# Ubuntu/Debian:
-sudo apt update && sudo apt install python3 python3-pip python3-tk
+chmod +x run-scalpdf-linux.sh
+chmod +x ScalPDF-Linux
+```
 
-# CentOS/RHEL:
-sudo yum install python3 python3-pip tkinter
+### **"Python not found":**
+```bash
+# Ubuntu/Debian
+sudo apt install python3 python3-pip python3-tk
 
-# Arch Linux:
+# Fedora
+sudo dnf install python3 python3-pip python3-tkinter
+
+# Arch
 sudo pacman -S python python-pip tk
 ```
 
-### **If GUI doesn't appear:**
+### **"pip install failed":**
 ```bash
-# Make sure you have GUI support:
+# Upgrade pip
+python3 -m pip install --upgrade pip --user
+
+# Install manually
+python3 -m pip install --user PyMuPDF Pillow pikepdf cryptography
+```
+
+### **"GUI doesn't appear":**
+```bash
+# Check display
 echo $DISPLAY
 
-# If empty, you might be in a headless environment
-# Use X11 forwarding if connecting via SSH:
-ssh -X username@hostname
+# Install GUI libraries
+sudo apt install python3-tk libgl1-mesa-dri
 ```
 
-### **Permission denied:**
-```bash
-chmod +x ScalPDF-Linux.py
-```
+## 📋 **File Guide**
 
-## 🎉 **Success!**
+| File | Purpose | Usage |
+|------|---------|-------|
+| `run-scalpdf-linux.sh` | **Auto-installer script** | `./run-scalpdf-linux.sh` |
+| `ScalPDF-Linux` | **Python auto-installer** | `python3 ScalPDF-Linux` |
+| `ScalPDF-Portable.py` | **Main application** | `python3 ScalPDF-Portable.py` |
+| ~~`ScalPDF`~~ | ❌ macOS binary (won't work) | Don't use on Linux |
 
-Once running, you'll see:
-- 🔒 **ScalPDF Linux** window with modern GUI
-- 📂 **Open button** to load PDF files
-- 🛠️ **Toolbar** with all PDF operations
-- ✅ **Status bar** showing dependency status
+## 🎉 **Success Path**
 
-**No more "cannot execute binary file" errors!** 🎊
+1. **Update repository**: `git pull origin main`
+2. **Navigate to folder**: `cd "scal-pdf/Installers GUI"`
+3. **Run auto-installer**: `./run-scalpdf-linux.sh`
+4. **Enjoy ScalPDF**: Complete PDF application launches!
+
+**The auto-installer handles everything - dependencies, GUI setup, and launching ScalPDF with full functionality!** 🚀
 
 ---
 
-**Built for Linux • Privacy-First • Completely Offline**
+**ScalPDF - Now Linux-Ready with Auto-Installation!** 🐧🔒
